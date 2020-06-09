@@ -4,7 +4,7 @@ const knex = require("./data/dbConfig"); //<< rename the db
 
 const router = express.Router();
 
-//--GET accounts---
+//-----------GET accounts---------
 router.get("/", (req, res) => {
   knex
     .select("*")
@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
     });
 });
 
-//GET account BY ID-----//
+//----------GET account BY ID-----//
 router.get("/:id", (req, res) => {
   // select * from account where id = req.params.id
   knex
@@ -46,6 +46,27 @@ router.post("/", (req, res) => {
     .catch((error) => {
       console.log("POST/INSERT/ error:", error);
       res.status(500).json({ message: error.message });
+    });
+});
+
+//------PUT/UPDATE account -----//
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  knex("accounts")
+    .where({ id })
+    .update(changes)
+    .then((count) => {
+      if (count >= 0) {
+        res.status(200).json({ message: "record updated successfully" });
+      } else {
+        res.status(404).json({ message: "no records updated or found" });
+      }
+    })
+    .catch((error) => {
+      console.log("PUT / error", error);
     });
 });
 
