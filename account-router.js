@@ -36,7 +36,6 @@ router.get("/:id", (req, res) => {
 });
 
 //---------POST / INSERT account---/
-
 router.post("/", (req, res) => {
   knex("accounts")
     .insert(req.body)
@@ -50,7 +49,6 @@ router.post("/", (req, res) => {
 });
 
 //------PUT/UPDATE account -----//
-
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const changes = req.body;
@@ -60,13 +58,32 @@ router.put("/:id", (req, res) => {
     .update(changes)
     .then((count) => {
       if (count >= 0) {
-        res.status(200).json({ message: "record updated successfully" });
+        res.status(200).json({ message: "account updated successfully" });
       } else {
-        res.status(404).json({ message: "no records updated or found" });
+        res.status(404).json({ message: "no account updated or found" });
       }
     })
     .catch((error) => {
       console.log("PUT / error", error);
+    });
+});
+
+//----------DELETE account by ID----//
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  knex("accounts")
+    .where({ id }) // if not using a where, all records will be removed
+    .del() // <----- don't forget this part
+    .then((count) => {
+      if (count > 0) {
+        res.status(200).json({ message: "account deleted successfully" });
+      } else {
+        res.status(404).json({ message: "no accounts found" });
+      }
+    })
+    .catch((error) => {
+      console.log("GET / error", error);
+      res.status(500).json({ message: error.message });
     });
 });
 
