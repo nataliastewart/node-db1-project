@@ -1,0 +1,52 @@
+const express = require("express");
+
+const knex = require("./data/dbConfig"); //<< rename the db
+
+const router = express.Router();
+
+//--GET accounts---
+router.get("/", (req, res) => {
+  knex
+    .select("*")
+    .from("accounts")
+    .then((accounts) => {
+      res.status(200).json({ data: accounts });
+    })
+    .catch((error) => {
+      console.log(`GET/error`, error);
+      res.status(500).json({ message: error.message });
+    });
+});
+
+//GET account BY ID-----//
+router.get("/:id", (req, res) => {
+  // select * from account where id = req.params.id
+  knex
+    .select("*")
+    .from("accounts")
+    .where({ id: req.params.id })
+    .first()
+    .then((account) => {
+      res.status(200).json({ data: account });
+    })
+    .catch((error) => {
+      console.log(`GET BY ID/error:`, error);
+      res.status(500).json({ message: error.message });
+    });
+});
+
+//---------POST / INSERT account---/
+
+router.post("/", (req, res) => {
+  knex("accounts")
+    .insert(req.body)
+    .then((account) => {
+      res.status(201).json(account);
+    })
+    .catch((error) => {
+      console.log("POST/INSERT/ error:", error);
+      res.status(500).json({ message: error.message });
+    });
+});
+
+module.exports = router;
